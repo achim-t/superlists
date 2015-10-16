@@ -83,6 +83,6 @@ class NewVisitorTest(LiveServerTestCase):
 		self.assertIn('Buy milk', page_text)
 
 		# Satisfied, they both go back to sleep
-		self.browser.quit()
-		self.fail('Finish the test!')
+		#self.browser.quit()
+		
 
