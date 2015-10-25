@@ -3,6 +3,7 @@ from django.conf import settings
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 User = get_user_model()
+import logging
 
 from accounts.authentication import (
     PERSONA_VERIFY_URL, PersonalAuthenticationBackend
@@ -10,6 +11,21 @@ from accounts.authentication import (
 
 @patch('accounts.authentication.requests.post')
 class AuthenticateTest(TestCase):
+
+    def test_logs_non_okay_responses_from_persona(self, mock_post):
+        response_json = {
+            'status': 'not okay', 'reason': 'eg, audience mismatch'
+        }
+        mock_post.return_value.ok = True
+        mock_post.return_value.json.return_value = response_json
+
+        logger = logging.getLogger('accounts.authentication')
+        with patch.object(logger, 'warning') as mock_log_warning:
+            self.backend.authenticate('an assertion')
+
+        mock_log_warning.assert_called_once_with(
+            'Persona says no. Json was: {}'.format(response_json)
+        )
 
     def setUp(self):
         self.backend = PersonalAuthenticationBackend()
