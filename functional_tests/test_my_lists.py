@@ -2,7 +2,7 @@ from django.conf import settings
 from .base import FunctionalTest
 from .server_tools import create_session_on_server
 from .management.commands.create_session import create_pre_authenticated_session
-
+from unittest import skip
 class MyListsTest(FunctionalTest):
 
     def create_pre_authenticated_session(self, email):
@@ -19,6 +19,7 @@ class MyListsTest(FunctionalTest):
             path='/',
         ))
 
+    @skip
     def test_logged_in_users_lists_are_saved_as_my_lists(self):
         # Edith is a logged-in user
         self.create_pre_authenticated_session('edith@example.com')
